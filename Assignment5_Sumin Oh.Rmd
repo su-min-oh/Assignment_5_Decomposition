@@ -1,0 +1,45 @@
+---
+title: "Assignment5"
+author: "Sumin Oh"
+date: "2024-10-10"
+output: html_document
+---
+
+#### 1. Import data file and make it a time series.
+```{r}
+library(fpp)
+library(fpp2)
+paxdata=read.csv("/Users/suminoh/Downloads/paxdata.csv",header=FALSE)
+ts_data = ts(paxdata$V1, start = c(2003), frequency = 12)
+options(scipen = 999)
+plot(ts_data)
+
+```
+
+#### 2. Decomposite the data
+```{r}
+stl_decomposition <- stl(ts_data,s.window ="periodic")
+plot(stl_decomposition)
+
+# Except for the pandemic period started from 2020, it seems that the seasonality and trend explains most of the data. From 2003 to 2019, the residual was close to 0, meaning that there was no particular external factors affecting the data.
+
+```
+
+#### 3. Seasonally adjust the data
+```{r}
+stl_seasadj<-seasadj(stl_decomposition)
+plot(stl_seasadj)
+```
+
+#### 4. Plot a line on a graph
+```{r}
+plot(ts_data)
+lines(stl_seasadj,col="red")
+```
+
+#### 5. Forecast using decomposition
+```{r}
+decomp_forecast<-forecast(stl_decomposition,h=12)
+plot(decomp_forecast)
+```
+
